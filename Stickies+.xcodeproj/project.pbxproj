@@ -16,6 +16,10 @@
 		DEAA951A2C8902B200551B64 /* Stickies_UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95192C8902B200551B64 /* Stickies_UITestsLaunchTests.swift */; };
 		DEAA95272C8904C400551B64 /* DraggableTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95262C8904C400551B64 /* DraggableTitleBar.swift */; };
 		DEAA95292C89072500551B64 /* CustomWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95282C89072500551B64 /* CustomWindow.swift */; };
+		DEAA952D2C8E616900551B64 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA952C2C8E616900551B64 /* WindowManager.swift */; };
+		DEAA952F2C8E618200551B64 /* ColorMenuManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA952E2C8E618200551B64 /* ColorMenuManager.swift */; };
+		DEAA95312C8E619400551B64 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95302C8E619400551B64 /* CustomTextView.swift */; };
+		DEAA95332C8E61AA00551B64 /* NSColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +53,10 @@
 		DEAA95192C8902B200551B64 /* Stickies_UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stickies_UITestsLaunchTests.swift; sourceTree = "<group>"; };
 		DEAA95262C8904C400551B64 /* DraggableTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableTitleBar.swift; sourceTree = "<group>"; };
 		DEAA95282C89072500551B64 /* CustomWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWindow.swift; sourceTree = "<group>"; };
+		DEAA952C2C8E616900551B64 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
+		DEAA952E2C8E618200551B64 /* ColorMenuManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMenuManager.swift; sourceTree = "<group>"; };
+		DEAA95302C8E619400551B64 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
+		DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Hex.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +114,10 @@
 				DEAA95042C8902B100551B64 /* Stickies_.entitlements */,
 				DEAA95262C8904C400551B64 /* DraggableTitleBar.swift */,
 				DEAA95282C89072500551B64 /* CustomWindow.swift */,
+				DEAA952C2C8E616900551B64 /* WindowManager.swift */,
+				DEAA952E2C8E618200551B64 /* ColorMenuManager.swift */,
+				DEAA95302C8E619400551B64 /* CustomTextView.swift */,
+				DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */,
 			);
 			path = "Stickies+";
 			sourceTree = "<group>";
@@ -257,10 +269,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DEAA952F2C8E618200551B64 /* ColorMenuManager.swift in Sources */,
 				DEAA95292C89072500551B64 /* CustomWindow.swift in Sources */,
 				DEAA94FE2C8902AF00551B64 /* ViewController.swift in Sources */,
 				DEAA95272C8904C400551B64 /* DraggableTitleBar.swift in Sources */,
+				DEAA95332C8E61AA00551B64 /* NSColor+Hex.swift in Sources */,
+				DEAA95312C8E619400551B64 /* CustomTextView.swift in Sources */,
 				DEAA94FC2C8902AF00551B64 /* AppDelegate.swift in Sources */,
+				DEAA952D2C8E616900551B64 /* WindowManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
