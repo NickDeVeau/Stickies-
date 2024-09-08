@@ -14,6 +14,8 @@
 		DEAA950E2C8902B200551B64 /* Stickies_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA950D2C8902B200551B64 /* Stickies_Tests.swift */; };
 		DEAA95182C8902B200551B64 /* Stickies_UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95172C8902B200551B64 /* Stickies_UITests.swift */; };
 		DEAA951A2C8902B200551B64 /* Stickies_UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95192C8902B200551B64 /* Stickies_UITestsLaunchTests.swift */; };
+		DEAA95272C8904C400551B64 /* DraggableTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95262C8904C400551B64 /* DraggableTitleBar.swift */; };
+		DEAA95292C89072500551B64 /* CustomWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95282C89072500551B64 /* CustomWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +47,8 @@
 		DEAA95132C8902B200551B64 /* Stickies+UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Stickies+UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEAA95172C8902B200551B64 /* Stickies_UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stickies_UITests.swift; sourceTree = "<group>"; };
 		DEAA95192C8902B200551B64 /* Stickies_UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stickies_UITestsLaunchTests.swift; sourceTree = "<group>"; };
+		DEAA95262C8904C400551B64 /* DraggableTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableTitleBar.swift; sourceTree = "<group>"; };
+		DEAA95282C89072500551B64 /* CustomWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +104,8 @@
 				DEAA94FF2C8902B100551B64 /* Assets.xcassets */,
 				DEAA95012C8902B100551B64 /* Main.storyboard */,
 				DEAA95042C8902B100551B64 /* Stickies_.entitlements */,
+				DEAA95262C8904C400551B64 /* DraggableTitleBar.swift */,
+				DEAA95282C89072500551B64 /* CustomWindow.swift */,
 			);
 			path = "Stickies+";
 			sourceTree = "<group>";
@@ -251,7 +257,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DEAA95292C89072500551B64 /* CustomWindow.swift in Sources */,
 				DEAA94FE2C8902AF00551B64 /* ViewController.swift in Sources */,
+				DEAA95272C8904C400551B64 /* DraggableTitleBar.swift in Sources */,
 				DEAA94FC2C8902AF00551B64 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
