@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build Xcode Project",
+        "type": "shell",
+        "command": "xcodebuild -project Stickies+.xcodeproj -scheme Stickies+ -derivedDataPath build",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"],
+        "detail": "Builds the Xcode project using xcodebuild"
+      },
+      {
+        "label": "Run Xcode Project",
+        "type": "shell",
+        "command": "xcrun open build/Build/Products/Debug/Stickies+.app",
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "problemMatcher": []
+      }
+    ]
+  }
+  

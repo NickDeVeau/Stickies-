@@ -1,0 +1,58 @@
+{
+  "" : {
+    "diagnostics" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/Stickies+-master.dia",
+    "emit-module-dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/Stickies+-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/Stickies+-master-emit-module.dia",
+    "swift-dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/Stickies+-master.swiftdeps"
+  },
+  "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/nickdeveau/Projects/Utility/Stickies+/Stickies+/AppDelegate.swift" : {
+    "const-values" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate.d",
+    "diagnostics" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate.dia",
+    "index-unit-output-path" : "/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate.o",
+    "llvm-bc" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate.bc",
+    "object" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate.o",
+    "swift-dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/nickdeveau/Projects/Utility/Stickies+/Stickies+/CustomWindow.swift" : {
+    "const-values" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow.swiftconstvalues",
+    "dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow.d",
+    "diagnostics" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow.dia",
+    "index-unit-output-path" : "/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow.o",
+    "llvm-bc" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow.bc",
+    "object" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow.o",
+    "swift-dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow.swiftdeps",
+    "swiftmodule" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/CustomWindow~partial.swiftmodule"
+  },
+  "/Users/nickdeveau/Projects/Utility/Stickies+/Stickies+/DraggableTitleBar.swift" : {
+    "const-values" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar.swiftconstvalues",
+    "dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar.d",
+    "diagnostics" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar.dia",
+    "index-unit-output-path" : "/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar.o",
+    "llvm-bc" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar.bc",
+    "object" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar.o",
+    "swift-dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar.swiftdeps",
+    "swiftmodule" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/DraggableTitleBar~partial.swiftmodule"
+  },
+  "/Users/nickdeveau/Projects/Utility/Stickies+/Stickies+/ViewController.swift" : {
+    "const-values" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController.swiftconstvalues",
+    "dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController.d",
+    "diagnostics" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController.dia",
+    "index-unit-output-path" : "/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController.o",
+    "llvm-bc" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController.bc",
+    "object" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController.o",
+    "swift-dependencies" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController.swiftdeps",
+    "swiftmodule" : "/Users/nickdeveau/Projects/Utility/Stickies+/build/Build/Intermediates.noindex/Stickies+.build/Debug/Stickies+.build/Objects-normal/x86_64/ViewController~partial.swiftmodule"
+  }
+}
