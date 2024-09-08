@@ -3,9 +3,12 @@ import Cocoa
 class ColorMenuManager {
     static let shared = ColorMenuManager()
 
-    func addColorMenuItems(target: WindowManager) {
+    func updateColorMenuItems(target: WindowManager?) {
+        guard let target = target else { return } // Ensure we have a valid target
+        
         let mainMenu = NSApplication.shared.mainMenu ?? NSMenu(title: "MainMenu")
         let colorMenuItem = mainMenu.items.first(where: { $0.title == "Color" }) ?? NSMenuItem(title: "Color", action: nil, keyEquivalent: "")
+        
         if colorMenuItem.submenu == nil {
             colorMenuItem.submenu = NSMenu(title: "Color")
             mainMenu.addItem(colorMenuItem)
@@ -26,8 +29,8 @@ class ColorMenuManager {
         let colorMenu = colorMenuItem.submenu!
         colorMenu.removeAllItems()
         colors.forEach { title, hex in
-            let item = NSMenuItem(title: title, action: #selector(target.changeBackgroundColor(_:)), keyEquivalent: "")
-            item.target = target
+            let item = NSMenuItem(title: title, action: #selector(changeBackgroundColor(_:)), keyEquivalent: "")
+            item.target = self
             item.representedObject = hex
             if let color = NSColor(hex: hex) {
                 item.attributedTitle = NSAttributedString(string: "● \(title)", attributes: [.foregroundColor: color])
@@ -35,9 +38,27 @@ class ColorMenuManager {
             colorMenu.addItem(item)
         }
 
-        let toggleItem = NSMenuItem(title: "Toggle Transparency", action: #selector(target.toggleTransparency), keyEquivalent: "t")
-        toggleItem.target = target
+        let toggleItem = NSMenuItem(title: "Toggle Transparency", action: #selector(toggleTransparency), keyEquivalent: "t")
+        toggleItem.target = self
         colorMenu.addItem(toggleItem)
         NSApplication.shared.mainMenu = mainMenu
+    }
+
+    @objc func changeBackgroundColor(_ sender: NSMenuItem) {
+        guard let appDelegate = NSApplication.shared.delegate as? AppDelegate,
+              let activeWindowManager = appDelegate.activeWindowManager,
+              let hex = sender.representedObject as? String,
+              let color = NSColor(hex: hex) else { return }
+
+        activeWindowManager.backgroundView.layer?.backgroundColor = color.cgColor
+        activeWindowManager.updateCloseButtonColor()
+    }
+
+    @objc func toggleTransparency() {
+        guard let appDelegate = NSApplication.shared.delegate as? AppDelegate,
+              let activeWindowManager = appDelegate.activeWindowManager else { return }
+
+        activeWindowManager.isHalfTransparent.toggle()
+        updateColorMenuItems(target: activeWindowManager)
     }
 }

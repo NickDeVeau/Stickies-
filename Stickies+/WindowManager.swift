@@ -1,6 +1,11 @@
 import Cocoa
 
+protocol WindowFocusDelegate: AnyObject {
+    func windowDidBecomeActive(_ windowManager: WindowManager)
+}
+
 class WindowManager: NSObject, NSWindowDelegate {
+    weak var delegate: WindowFocusDelegate? // Delegate to notify AppDelegate of focus changes
     var window: CustomWindow!
     var closeButton: NSButton!
     var titleBarView: DraggableTitleBar!
@@ -14,10 +19,8 @@ class WindowManager: NSObject, NSWindowDelegate {
         setupTitleBar()
         setupCloseButton()
         setupTextView()
-        ColorMenuManager.shared.addColorMenuItems(target: self)
+        ColorMenuManager.shared.updateColorMenuItems(target: self)
         updateCloseButtonColor()
-
-        // Explicitly show the close button after setting up the window
         showCloseButtonIfNeeded()
     }
 
@@ -27,7 +30,7 @@ class WindowManager: NSObject, NSWindowDelegate {
         let windowFrame = NSRect(x: (screenSize.width - windowSize.width) / 2, y: (screenSize.height - windowSize.height) / 2, width: windowSize.width, height: windowSize.height)
 
         window = CustomWindow(contentRect: windowFrame, styleMask: [.borderless, .resizable], backing: .buffered, defer: false)
-        window.delegate = self // Set the delegate here
+        window.delegate = self
         window.backgroundColor = .clear
         window.hasShadow = false
         window.level = .floating
@@ -58,7 +61,7 @@ class WindowManager: NSObject, NSWindowDelegate {
         closeButton = NSButton(frame: NSRect(x: 5, y: 2, width: 16, height: 16))
         closeButton.bezelStyle = .regularSquare
         closeButton.isBordered = false
-        closeButton.isHidden = true // Initially hidden
+        closeButton.isHidden = true
         closeButton.target = self
         closeButton.action = #selector(closeWindow)
         closeButton.autoresizingMask = [.maxXMargin, .minYMargin]
@@ -89,6 +92,7 @@ class WindowManager: NSObject, NSWindowDelegate {
 
     func windowDidBecomeKey(_ notification: Notification) {
         showCloseButtonIfNeeded()
+        delegate?.windowDidBecomeActive(self) // Notify delegate of active window
     }
 
     func windowDidResignKey(_ notification: Notification) {
@@ -107,19 +111,8 @@ class WindowManager: NSObject, NSWindowDelegate {
         }
     }
 
-    @objc func changeBackgroundColor(_ sender: NSMenuItem) {
-        if let hex = sender.representedObject as? String, let color = NSColor(hex: hex) {
-            backgroundView.layer?.backgroundColor = color.cgColor
-            updateCloseButtonColor()
-        }
-    }
-
-    @objc func toggleTransparency() {
-        isHalfTransparent.toggle()
-        ColorMenuManager.shared.addColorMenuItems(target: self)
-    }
-
-    private func updateCloseButtonColor() {
+    // Changed from private to internal (default) to be accessible by ColorMenuManager
+    func updateCloseButtonColor() {
         if let bgColor = backgroundView.layer?.backgroundColor, let bgNSColor = NSColor(cgColor: bgColor) {
             closeButton.attributedTitle = NSAttributedString(string: "✕", attributes: [.foregroundColor: contrastColor(for: bgNSColor)])
         }

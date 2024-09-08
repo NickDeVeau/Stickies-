@@ -3,6 +3,7 @@ import Cocoa
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
     var windowManagers: [WindowManager] = []
+    var activeWindowManager: WindowManager? // Keeps track of the currently active window
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         createNewNoteWindow()
@@ -14,15 +15,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func createNewNoteWindow() {
-        let windowManager = WindowManager() // Initialize a new window manager
-        windowManager.setupMainWindow() // Setup the main window
-        windowManagers.append(windowManager) // Keep track of all window managers
+        let windowManager = WindowManager()
+        windowManager.delegate = self // Assign delegate to track active window
+        windowManager.setupMainWindow()
+        windowManagers.append(windowManager)
     }
 
     private func setupMainMenu() {
         let mainMenu = NSApplication.shared.mainMenu ?? NSMenu(title: "MainMenu")
         
-        // Create "File" menu
         let fileMenuItem = mainMenu.items.first(where: { $0.title == "File" }) ?? NSMenuItem(title: "File", action: nil, keyEquivalent: "")
         if fileMenuItem.submenu == nil {
             fileMenuItem.submenu = NSMenu(title: "File")
@@ -33,5 +34,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         fileMenu.addItem(NSMenuItem(title: "New Note", action: #selector(createNewNoteWindow), keyEquivalent: "n"))
 
         NSApplication.shared.mainMenu = mainMenu
+    }
+}
+
+// Extension to handle window focus changes
+extension AppDelegate: WindowFocusDelegate {
+    func windowDidBecomeActive(_ windowManager: WindowManager) {
+        activeWindowManager = windowManager
+        ColorMenuManager.shared.updateColorMenuItems(target: activeWindowManager)
     }
 }
