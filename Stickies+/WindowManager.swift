@@ -81,9 +81,11 @@ class WindowManager: NSObject, NSWindowDelegate {
         textView.textColor = .black
         textView.font = NSFont.systemFont(ofSize: 14)
         textView.isEditable = true
-        textView.isRichText = false
+        textView.isRichText = true // Enable rich text support
+        textView.importsGraphics = true // Allows images and other graphics
+        textView.allowsImageEditing = true // Allows image editing within the text view
         textView.allowsUndo = true
-        textView.string = properties?.text ?? "" // Restore text
+        textView.usesRuler = true // Enable ruler for text alignment and other rich text features
         scrollView.documentView = textView
         backgroundView.addSubview(scrollView)
     }
