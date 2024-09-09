@@ -20,6 +20,7 @@
 		DEAA952F2C8E618200551B64 /* ColorMenuManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA952E2C8E618200551B64 /* ColorMenuManager.swift */; };
 		DEAA95312C8E619400551B64 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95302C8E619400551B64 /* CustomTextView.swift */; };
 		DEAA95332C8E61AA00551B64 /* NSColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */; };
+		DEAA95392C8E79D000551B64 /* WindowPropertiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95382C8E79D000551B64 /* WindowPropertiesManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		DEAA952E2C8E618200551B64 /* ColorMenuManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMenuManager.swift; sourceTree = "<group>"; };
 		DEAA95302C8E619400551B64 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
 		DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Hex.swift"; sourceTree = "<group>"; };
+		DEAA95382C8E79D000551B64 /* WindowPropertiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPropertiesManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,7 @@
 				DEAA952E2C8E618200551B64 /* ColorMenuManager.swift */,
 				DEAA95302C8E619400551B64 /* CustomTextView.swift */,
 				DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */,
+				DEAA95382C8E79D000551B64 /* WindowPropertiesManager.swift */,
 			);
 			path = "Stickies+";
 			sourceTree = "<group>";
@@ -274,6 +277,7 @@
 				DEAA94FE2C8902AF00551B64 /* ViewController.swift in Sources */,
 				DEAA95272C8904C400551B64 /* DraggableTitleBar.swift in Sources */,
 				DEAA95332C8E61AA00551B64 /* NSColor+Hex.swift in Sources */,
+				DEAA95392C8E79D000551B64 /* WindowPropertiesManager.swift in Sources */,
 				DEAA95312C8E619400551B64 /* CustomTextView.swift in Sources */,
 				DEAA94FC2C8902AF00551B64 /* AppDelegate.swift in Sources */,
 				DEAA952D2C8E616900551B64 /* WindowManager.swift in Sources */,
