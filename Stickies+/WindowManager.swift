@@ -5,7 +5,7 @@ protocol WindowFocusDelegate: AnyObject {
 }
 
 class WindowManager: NSObject, NSWindowDelegate {
-    weak var delegate: WindowFocusDelegate? // Delegate to notify AppDelegate of focus changes
+    weak var delegate: WindowFocusDelegate?
     var window: CustomWindow!
     var closeButton: NSButton!
     var titleBarView: DraggableTitleBar!
@@ -13,21 +13,22 @@ class WindowManager: NSObject, NSWindowDelegate {
     var backgroundView: NSView!
     var isHalfTransparent: Bool = false
 
-    func setupMainWindow() {
-        setupWindow()
-        setupBackgroundView()
+    func setupMainWindow(with properties: WindowProperties? = nil) {
+        setupWindow(with: properties)
+        setupBackgroundView(with: properties)
         setupTitleBar()
         setupCloseButton()
-        setupTextView()
+        setupTextView(with: properties)
         ColorMenuManager.shared.updateColorMenuItems(target: self)
         updateCloseButtonColor()
         showCloseButtonIfNeeded()
     }
 
-    private func setupWindow() {
+    private func setupWindow(with properties: WindowProperties?) {
         let screenSize = NSScreen.main?.frame.size ?? CGSize(width: 800, height: 600)
-        let windowSize = CGSize(width: 300, height: 300)
-        let windowFrame = NSRect(x: (screenSize.width - windowSize.width) / 2, y: (screenSize.height - windowSize.height) / 2, width: windowSize.width, height: windowSize.height)
+        let windowSize = properties?.size ?? CGSize(width: 300, height: 300)
+        let windowOrigin = properties?.position ?? CGPoint(x: (screenSize.width - windowSize.width) / 2, y: (screenSize.height - windowSize.height) / 2)
+        let windowFrame = NSRect(origin: windowOrigin, size: windowSize)
 
         window = CustomWindow(contentRect: windowFrame, styleMask: [.borderless, .resizable], backing: .buffered, defer: false)
         window.delegate = self
@@ -39,12 +40,12 @@ class WindowManager: NSObject, NSWindowDelegate {
         window.titlebarAppearsTransparent = true
     }
 
-    private func setupBackgroundView() {
+    private func setupBackgroundView(with properties: WindowProperties?) {
         backgroundView = NSView(frame: window.frame)
         backgroundView.wantsLayer = true
         backgroundView.layer?.cornerRadius = 10
         backgroundView.layer?.masksToBounds = true
-        backgroundView.layer?.backgroundColor = NSColor.yellow.cgColor
+        backgroundView.layer?.backgroundColor = (properties?.color ?? NSColor.yellow).cgColor
         window.contentView = backgroundView
     }
 
@@ -68,7 +69,7 @@ class WindowManager: NSObject, NSWindowDelegate {
         titleBarView.addSubview(closeButton)
     }
 
-    private func setupTextView() {
+    private func setupTextView(with properties: WindowProperties?) {
         let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: backgroundView.frame.width, height: backgroundView.frame.height - 20))
         scrollView.hasVerticalScroller = true
         scrollView.drawsBackground = false
@@ -80,23 +81,48 @@ class WindowManager: NSObject, NSWindowDelegate {
         textView.textColor = .black
         textView.font = NSFont.systemFont(ofSize: 14)
         textView.isEditable = true
-        textView.isRichText = false
+        textView.isRichText = true // Enable rich text support
+        textView.importsGraphics = true // Allows images and other graphics
+        textView.allowsImageEditing = true // Allows image editing within the text view
         textView.allowsUndo = true
+        textView.usesRuler = true // Enable ruler for text alignment and other rich text features
         scrollView.documentView = textView
         backgroundView.addSubview(scrollView)
     }
 
     @objc func closeWindow() {
-        window.close()
+        guard window != nil else { return }
+        window.delegate = nil  // Clear delegate to prevent potential calls on deallocated objects
+        window.close()         // Close the window
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        // Ensure proper cleanup before the window is deallocated
+        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+            appDelegate.windowManagers.removeAll(where: { $0 === self })
+        }
     }
 
     func windowDidBecomeKey(_ notification: Notification) {
         showCloseButtonIfNeeded()
-        delegate?.windowDidBecomeActive(self) // Notify delegate of active window
+        delegate?.windowDidBecomeActive(self)
     }
 
     func windowDidResignKey(_ notification: Notification) {
         hideCloseButtonIfNeeded()
+    }
+
+    func captureWindowProperties() -> WindowProperties? {
+        guard window != nil else {
+            print("Error: Attempting to access a deallocated window.")
+            return nil
+        }
+        
+        let color = NSColor(cgColor: backgroundView.layer?.backgroundColor ?? NSColor.yellow.cgColor) ?? .yellow
+        let text = textView.string
+        let position = window.frame.origin // Ensure window is not nil
+        let size = window.frame.size
+        return WindowProperties(color: color, text: text, position: position, size: size)
     }
 
     private func showCloseButtonIfNeeded() {
@@ -111,7 +137,6 @@ class WindowManager: NSObject, NSWindowDelegate {
         }
     }
 
-    // Changed from private to internal (default) to be accessible by ColorMenuManager
     func updateCloseButtonColor() {
         if let bgColor = backgroundView.layer?.backgroundColor, let bgNSColor = NSColor(cgColor: bgColor) {
             closeButton.attributedTitle = NSAttributedString(string: "✕", attributes: [.foregroundColor: contrastColor(for: bgNSColor)])
