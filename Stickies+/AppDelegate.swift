@@ -3,7 +3,8 @@ import Cocoa
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
     var windowManagers: [WindowManager] = []
-    var activeWindowManager: WindowManager? // Keeps track of the currently active window
+    var windowProperties: [WindowProperties] = []
+    var activeWindowManager: WindowManager?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         loadSavedWindows()
@@ -11,7 +12,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        saveAllWindows() // Ensure this method is called to save the state
+        // Preserve window properties on application termination
+        saveAllWindows()
+    }
+
+    // Determine how to handle quitting based on the quit method
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        // Preserve all windows and their contents unless they were closed by the custom 'X' button
+        saveAllWindows()
+        return .terminateNow
     }
 
     @objc func createNewNote() {
@@ -19,7 +28,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func createNewNoteWindow(with properties: WindowProperties? = nil) {
-        let windowManager = WindowManager()
+        let id = properties?.id ?? UUID()
+        let windowManager = WindowManager(id: id)
         windowManager.delegate = self
         windowManager.setupMainWindow(with: properties)
         windowManagers.append(windowManager)
@@ -36,21 +46,80 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let fileMenu = fileMenuItem.submenu!
         fileMenu.addItem(NSMenuItem(title: "New Note", action: #selector(createNewNote), keyEquivalent: "n"))
+        fileMenu.addItem(NSMenuItem(title: "Save Note", action: #selector(saveNote), keyEquivalent: "s"))
+        fileMenu.addItem(NSMenuItem(title: "Open Note", action: #selector(openNote), keyEquivalent: "o"))
 
         NSApplication.shared.mainMenu = mainMenu
     }
 
+
+    @objc func saveNote() {
+        guard let activeWindow = activeWindowManager else {
+            print("No active window to save.")
+            return
+        }
+        if let properties = activeWindow.captureWindowProperties() {
+            exportWindowPropertiesToFile(properties)
+        } else {
+            print("Failed to capture properties for the active window.")
+        }
+    }
+    
+    @objc func openNote() {
+        let openPanel = NSOpenPanel()
+        openPanel.allowedFileTypes = ["json"]
+        openPanel.begin { [weak self] response in
+            if response == .OK, let url = openPanel.url {
+                self?.loadWindowFromFile(url)
+            }
+        }
+    }
+
+    func loadWindowFromFile(_ url: URL) {
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            let properties = try decoder.decode(WindowProperties.self, from: data)
+            createNewNoteWindow(with: properties)
+        } catch {
+            print("Failed to load window properties: \(error)")
+        }
+    }
+
+    func exportWindowPropertiesToFile(_ properties: WindowProperties) {
+        let savePanel = NSSavePanel()
+        savePanel.allowedFileTypes = ["json"]
+        savePanel.begin { response in
+            if response == .OK, let url = savePanel.url {
+                do {
+                    let encoder = JSONEncoder()
+                    encoder.outputFormatting = .prettyPrinted
+                    let data = try encoder.encode(properties)
+                    try data.write(to: url)
+                    print("File saved: \(url.absoluteString)")
+                } catch {
+                    print("Failed to save file: \(error)")
+                }
+            }
+        }
+    }
+
     private func loadSavedWindows() {
         let savedProperties = WindowPropertiesManager.shared.loadWindowProperties()
+        windowProperties = savedProperties
         for properties in savedProperties {
             createNewNoteWindow(with: properties)
         }
     }
 
     private func saveAllWindows() {
-        // Use compactMap to filter out nil values and create a non-optional array
-        let properties = windowManagers.compactMap { $0.captureWindowProperties() }
-        WindowPropertiesManager.shared.saveWindowProperties(properties)
+        WindowPropertiesManager.shared.saveWindowProperties(windowProperties)
+    }
+
+    func updateWindowProperties(_ properties: WindowProperties) {
+        windowProperties.removeAll(where: { $0.id == properties.id })
+        windowProperties.append(properties)
+        WindowPropertiesManager.shared.saveWindowProperties(windowProperties)
     }
 }
 

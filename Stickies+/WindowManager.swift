@@ -6,6 +6,7 @@ protocol WindowFocusDelegate: AnyObject {
 
 class WindowManager: NSObject, NSWindowDelegate {
     weak var delegate: WindowFocusDelegate?
+    let id: UUID
     var window: CustomWindow!
     var closeButton: NSButton!
     var titleBarView: DraggableTitleBar!
@@ -13,6 +14,12 @@ class WindowManager: NSObject, NSWindowDelegate {
     var backgroundView: NSView!
     var isHalfTransparent: Bool = false
 
+    init(id: UUID = UUID()) {
+        self.id = id
+        super.init()
+        print("WindowManager initialized with id: \(id)")
+    }
+    
     func setupMainWindow(with properties: WindowProperties? = nil) {
         setupWindow(with: properties)
         setupBackgroundView(with: properties)
@@ -22,6 +29,7 @@ class WindowManager: NSObject, NSWindowDelegate {
         ColorMenuManager.shared.updateColorMenuItems(target: self)
         updateCloseButtonColor()
         showCloseButtonIfNeeded()
+        setupObservers()
     }
 
     private func setupWindow(with properties: WindowProperties?) {
@@ -31,7 +39,8 @@ class WindowManager: NSObject, NSWindowDelegate {
         let windowFrame = NSRect(origin: windowOrigin, size: windowSize)
 
         window = CustomWindow(contentRect: windowFrame, styleMask: [.borderless, .resizable], backing: .buffered, defer: false)
-        window.delegate = self
+        window.delegate = self   // Set as NSWindowDelegate
+        window.customDelegate = self // Set as custom delegate
         window.backgroundColor = .clear
         window.hasShadow = false
         window.level = .floating
@@ -86,6 +95,14 @@ class WindowManager: NSObject, NSWindowDelegate {
         textView.allowsImageEditing = true // Allows image editing within the text view
         textView.allowsUndo = true
         textView.usesRuler = true // Enable ruler for text alignment and other rich text features
+
+        // Set the attributed text content from properties
+        if let attributedText = properties?.text {
+            textView.textStorage?.setAttributedString(attributedText)
+        } else {
+            textView.string = ""
+        }
+
         scrollView.documentView = textView
         backgroundView.addSubview(scrollView)
     }
@@ -93,13 +110,31 @@ class WindowManager: NSObject, NSWindowDelegate {
     @objc func closeWindow() {
         guard window != nil else { return }
         window.delegate = nil  // Clear delegate to prevent potential calls on deallocated objects
-        window.close()         // Close the window
+        window.orderOut(nil)   // Immediately hides the window
+        window.performClose(nil)  // Closes the window properly and calls the delegate
+        
+        saveProperties()
+        
+        // Only remove properties if the custom close button is used
+        windowWillClose(Notification(name: Notification.Name("CustomWindowWillClose")))
     }
-
+    
     func windowWillClose(_ notification: Notification) {
-        // Ensure proper cleanup before the window is deallocated
-        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
-            appDelegate.windowManagers.removeAll(where: { $0 === self })
+        print("windowWillClose called successfully")
+
+        if notification.name.rawValue == "CustomWindowWillClose" {
+            // Only remove the window properties when custom button is pressed
+            if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+                print("Attempting to remove properties for window with id: \(self.id)")
+                appDelegate.windowProperties.removeAll(where: { $0.id == self.id })
+                
+                // Save the updated window properties
+                WindowPropertiesManager.shared.saveWindowProperties(appDelegate.windowProperties)
+                print("Properties removed for WindowManager with id: \(id). Remaining properties: \(appDelegate.windowProperties)")
+                
+                // Remove the window manager
+                appDelegate.windowManagers.removeAll(where: { $0 === self })
+            }
         }
     }
 
@@ -112,17 +147,25 @@ class WindowManager: NSObject, NSWindowDelegate {
         hideCloseButtonIfNeeded()
     }
 
+    func windowDidMove(_ notification: Notification) {
+        saveProperties()
+    }
+
+    func windowDidResize(_ notification: Notification) {
+        saveProperties()
+    }
+
     func captureWindowProperties() -> WindowProperties? {
         guard window != nil else {
             print("Error: Attempting to access a deallocated window.")
             return nil
         }
-        
+
         let color = NSColor(cgColor: backgroundView.layer?.backgroundColor ?? NSColor.yellow.cgColor) ?? .yellow
-        let text = textView.string
-        let position = window.frame.origin // Ensure window is not nil
+        let text = textView.attributedString()
+        let position = window.frame.origin
         let size = window.frame.size
-        return WindowProperties(color: color, text: text, position: position, size: size)
+        return WindowProperties(id: id, color: color, text: text, position: position, size: size)
     }
 
     private func showCloseButtonIfNeeded() {
@@ -146,5 +189,53 @@ class WindowManager: NSObject, NSWindowDelegate {
     private func contrastColor(for color: NSColor) -> NSColor {
         let lum = 0.299 * color.redComponent + 0.587 * color.greenComponent + 0.114 * color.blueComponent
         return lum > 0.5 ? .black : .white
+    }
+
+    // MARK: - Observers for Property Changes
+
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: NSText.didChangeNotification, object: textView)
+    }
+
+    @objc func textDidChange(_ notification: Notification) {
+        saveProperties()
+    }
+
+    func saveProperties() {
+        print("Clearing all stored data before saving new properties.")
+
+        // Clear all stored data by removing the entry from UserDefaults
+        UserDefaults.standard.removeObject(forKey: WindowPropertiesManager.propertiesKey)
+
+        // Check if the window is still open before saving properties
+        guard window != nil else {
+            print("Window is nil, not saving properties.")
+            return
+        }
+
+        // Save the new properties
+        guard let appDelegate = NSApplication.shared.delegate as? AppDelegate,
+              let properties = self.captureWindowProperties() else { return }
+
+        // Update the window properties with the new properties
+        appDelegate.updateWindowProperties(properties)
+        
+        // Print the current saved data
+        if let data = UserDefaults.standard.data(forKey: WindowPropertiesManager.propertiesKey) {
+            do {
+                let decoder = JSONDecoder()
+                let savedProperties = try decoder.decode([WindowProperties].self, from: data)
+                print("Current saved properties: \(savedProperties)")
+            } catch {
+                print("Failed to decode current saved properties: \(error.localizedDescription)")
+            }
+        } else {
+            print("No properties are currently saved.")
+        }
+    }
+
+    deinit {
+        print("WindowManager deallocated with id: \(id)")
+        NotificationCenter.default.removeObserver(self)
     }
 }
