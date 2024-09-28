@@ -7,8 +7,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var activeWindowManager: WindowManager?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        //clearAllUserDefaults()
         loadSavedWindows()
         setupMainMenu()
+    }
+    
+    func clearAllUserDefaults() {
+        if let appDomain = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: appDomain)
+        }
+        UserDefaults.standard.synchronize() // Ensure all changes are saved immediately
+        print("All UserDefaults have been cleared.")
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

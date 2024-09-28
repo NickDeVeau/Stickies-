@@ -21,6 +21,8 @@
 		DEAA95312C8E619400551B64 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95302C8E619400551B64 /* CustomTextView.swift */; };
 		DEAA95332C8E61AA00551B64 /* NSColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */; };
 		DEAA95392C8E79D000551B64 /* WindowPropertiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAA95382C8E79D000551B64 /* WindowPropertiesManager.swift */; };
+		DEB5E72B2C9A8E1600DB270D /* KeywordHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB5E72A2C9A8E1600DB270D /* KeywordHandler.swift */; };
+		DEB5E72D2C9B6CF000DB270D /* StringFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB5E72C2C9B6CF000DB270D /* StringFunctions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		DEAA95302C8E619400551B64 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
 		DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Hex.swift"; sourceTree = "<group>"; };
 		DEAA95382C8E79D000551B64 /* WindowPropertiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPropertiesManager.swift; sourceTree = "<group>"; };
+		DEB5E72A2C9A8E1600DB270D /* KeywordHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeywordHandler.swift; sourceTree = "<group>"; };
+		DEB5E72C2C9B6CF000DB270D /* StringFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringFunctions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +125,8 @@
 				DEAA95302C8E619400551B64 /* CustomTextView.swift */,
 				DEAA95322C8E61AA00551B64 /* NSColor+Hex.swift */,
 				DEAA95382C8E79D000551B64 /* WindowPropertiesManager.swift */,
+				DEB5E72A2C9A8E1600DB270D /* KeywordHandler.swift */,
+				DEB5E72C2C9B6CF000DB270D /* StringFunctions.swift */,
 			);
 			path = "Stickies+";
 			sourceTree = "<group>";
@@ -272,6 +278,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DEB5E72B2C9A8E1600DB270D /* KeywordHandler.swift in Sources */,
+				DEB5E72D2C9B6CF000DB270D /* StringFunctions.swift in Sources */,
 				DEAA952F2C8E618200551B64 /* ColorMenuManager.swift in Sources */,
 				DEAA95292C89072500551B64 /* CustomWindow.swift in Sources */,
 				DEAA94FE2C8902AF00551B64 /* ViewController.swift in Sources */,

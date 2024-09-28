@@ -16,14 +16,21 @@ class ColorMenuManager {
 
         let transparencySuffix = target.isHalfTransparent ? "80" : "FF"
         let colors: [(String, String)] = [
-            ("Soft Pink", "#FFC0CB" + transparencySuffix), ("Light Blue", "#ADD8E6" + transparencySuffix),
-            ("Pale Green", "#98FB98" + transparencySuffix), ("Lavender", "#E6E6FA" + transparencySuffix),
-            ("Beige", "#F5F5DC" + transparencySuffix), ("Mint Cream", "#F5FFFA" + transparencySuffix),
-            ("Azure", "#F0FFFF" + transparencySuffix), ("Honeydew", "#F0FFF0" + transparencySuffix),
-            ("Misty Rose", "#FFE4E1" + transparencySuffix), ("Light Coral", "#F08080" + transparencySuffix),
-            ("Wheat", "#F5DEB3" + transparencySuffix), ("Khaki", "#F0E68C" + transparencySuffix),
-            ("Silver", "#C0C0C0" + transparencySuffix), ("Sky Blue", "#87CEEB" + transparencySuffix),
-            ("Mellow Apricot", "#F8B878" + transparencySuffix)
+            ("Soft Yellow", "#FFFBCC" + transparencySuffix),    // Default yellowish sticky note
+            ("Blush Pink", "#FFB6C1" + transparencySuffix),      // Soft pink
+            ("Sky Blue", "#87CEFA" + transparencySuffix),        // Light blue
+            ("Mint Green", "#98FF98" + transparencySuffix),      // Soft mint green
+            ("Lavender", "#D8BFD8" + transparencySuffix),        // Lavender
+            ("Peach Puff", "#FFDAB9" + transparencySuffix),      // Peach
+            ("Powder Blue", "#B0E0E6" + transparencySuffix),     // Powder blue
+            ("Light Mint", "#E0FFF5" + transparencySuffix),      // Light mint cream
+            ("Light Honeydew", "#F1FFE7" + transparencySuffix),  // Soft honeydew
+            ("Misty Rose", "#FFE4E1" + transparencySuffix),      // Misty rose
+            ("Coral Pink", "#FF6F61" + transparencySuffix),      // Light coral
+            ("Soft Beige", "#FAF0E6" + transparencySuffix),      // Beige
+            ("Pale Sky", "#CAE9FF" + transparencySuffix),        // Light sky blue
+            ("Lemon Chiffon", "#FFFACD" + transparencySuffix),   // Soft lemon
+            ("Periwinkle", "#CCCCFF" + transparencySuffix)       // Soft periwinkle
         ]
 
         let colorMenu = colorMenuItem.submenu!

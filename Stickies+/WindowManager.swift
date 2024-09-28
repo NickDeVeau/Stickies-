@@ -7,12 +7,19 @@ protocol WindowFocusDelegate: AnyObject {
 class WindowManager: NSObject, NSWindowDelegate {
     weak var delegate: WindowFocusDelegate?
     let id: UUID
+    var updateTimer: Timer?
     var window: CustomWindow!
     var closeButton: NSButton!
     var titleBarView: DraggableTitleBar!
-    var textView: CustomTextView!
+    var advancedEditor: CustomTextView!        // Advanced Editor whose properties will be saved
+    var standardEditor: CustomTextView!        // Standard Editor, non-saved, read-only
     var backgroundView: NSView!
     var isHalfTransparent: Bool = false
+    var isAdvancedEditorVisible: Bool = true   // Track which editor is currently visible
+    var scrollView: NSScrollView!
+    private var auxiliaryPanelActive: Bool = false // Track if any auxiliary panel (like font or color) is active
+
+    private let keywordHandler = KeywordHandler() // Instance of the new KeywordHandler
 
     init(id: UUID = UUID()) {
         self.id = id
@@ -25,7 +32,7 @@ class WindowManager: NSObject, NSWindowDelegate {
         setupBackgroundView(with: properties)
         setupTitleBar()
         setupCloseButton()
-        setupTextView(with: properties)
+        setupTextEditors(with: properties) // Set up both editors
         ColorMenuManager.shared.updateColorMenuItems(target: self)
         updateCloseButtonColor()
         showCloseButtonIfNeeded()
@@ -39,11 +46,11 @@ class WindowManager: NSObject, NSWindowDelegate {
         let windowFrame = NSRect(origin: windowOrigin, size: windowSize)
 
         window = CustomWindow(contentRect: windowFrame, styleMask: [.borderless, .resizable], backing: .buffered, defer: false)
-        window.delegate = self   // Set as NSWindowDelegate
-        window.customDelegate = self // Set as custom delegate
+        window.delegate = self
+        window.customDelegate = self
         window.backgroundColor = .clear
         window.hasShadow = false
-        window.level = .floating
+        window.level = .normal
         window.makeKeyAndOrderFront(nil)
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
@@ -54,7 +61,9 @@ class WindowManager: NSObject, NSWindowDelegate {
         backgroundView.wantsLayer = true
         backgroundView.layer?.cornerRadius = 10
         backgroundView.layer?.masksToBounds = true
-        backgroundView.layer?.backgroundColor = (properties?.color ?? NSColor.yellow).cgColor
+        // Set default color to #FFFBCC (Soft Yellow)
+        let defaultColor = NSColor(red: 1.0, green: 0.984, blue: 0.8, alpha: 1.0)  // #FFFBCC
+        backgroundView.layer?.backgroundColor = (properties?.color ?? defaultColor).cgColor
         window.contentView = backgroundView
     }
 
@@ -78,61 +87,149 @@ class WindowManager: NSObject, NSWindowDelegate {
         titleBarView.addSubview(closeButton)
     }
 
-    private func setupTextView(with properties: WindowProperties?) {
-        let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: backgroundView.frame.width, height: backgroundView.frame.height - 20))
+    private func setupTextEditors(with properties: WindowProperties?) {
+        scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: backgroundView.frame.width, height: backgroundView.frame.height - 20))
         scrollView.hasVerticalScroller = true
         scrollView.drawsBackground = false
         scrollView.autoresizingMask = [.width, .height]
 
-        textView = CustomTextView(frame: scrollView.bounds)
-        textView.autoresizingMask = [.width, .height]
-        textView.backgroundColor = .clear
-        textView.textColor = .black
-        textView.font = NSFont.systemFont(ofSize: 14)
-        textView.isEditable = true
-        textView.isRichText = true // Enable rich text support
-        textView.importsGraphics = true // Allows images and other graphics
-        textView.allowsImageEditing = true // Allows image editing within the text view
-        textView.allowsUndo = true
-        textView.usesRuler = true // Enable ruler for text alignment and other rich text features
+        // Set up the Advanced Editor
+        advancedEditor = createTextView(isEditable: true, properties: properties?.text)
+        
+        // Set up the Standard Editor (read-only)
+        standardEditor = createTextView(isEditable: false, properties: nil)
 
-        // Set the attributed text content from properties
-        if let attributedText = properties?.text {
-            textView.textStorage?.setAttributedString(attributedText)
+        // Initially set visibility states based on `isAdvancedEditorVisible`
+        advancedEditor.isHidden = !isAdvancedEditorVisible
+        standardEditor.isHidden = isAdvancedEditorVisible
+
+        scrollView.documentView = isAdvancedEditorVisible ? advancedEditor : standardEditor
+        backgroundView.addSubview(scrollView)
+    }
+
+
+    private func createTextView(isEditable: Bool, properties: NSAttributedString?) -> CustomTextView {
+        let editor = CustomTextView(frame: scrollView.bounds)
+        editor.autoresizingMask = [.width, .height]
+        editor.backgroundColor = .clear
+        editor.textColor = .black
+        editor.font = NSFont.systemFont(ofSize: 14)
+        editor.isEditable = isEditable
+        editor.isRichText = true
+        editor.importsGraphics = isEditable
+        editor.allowsImageEditing = isEditable
+        editor.allowsUndo = isEditable
+        editor.usesRuler = isEditable
+
+        if let attributedText = properties {
+            editor.textStorage?.setAttributedString(attributedText)
         } else {
-            textView.string = ""
+            editor.string = ""
         }
 
-        scrollView.documentView = textView
-        backgroundView.addSubview(scrollView)
+        return editor
+    }
+
+    @objc func toggleEditorVisibility() {
+        if !auxiliaryPanelActive {
+            isAdvancedEditorVisible.toggle()
+
+            if !isAdvancedEditorVisible {
+                // Copy and process the text from the advanced editor
+                updateStandardEditorContent()
+                // Start the timer
+                startUpdateTimer()
+            } else {
+                // Invalidate the timer
+                stopUpdateTimer()
+            }
+
+            // Set visibility of the editors
+            advancedEditor.isHidden = !isAdvancedEditorVisible
+            standardEditor.isHidden = isAdvancedEditorVisible
+            scrollView.documentView = isAdvancedEditorVisible ? advancedEditor : standardEditor
+
+            print("Toggled visibility. Advanced Editor visible: \(isAdvancedEditorVisible)")
+        }
+    }
+
+    func startUpdateTimer() {
+        // Invalidate any existing timer
+        updateTimer?.invalidate()
+        updateTimer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(updateStandardEditorContent), userInfo: nil, repeats: true)
+    }
+
+    func stopUpdateTimer() {
+        updateTimer?.invalidate()
+        updateTimer = nil
+    }
+    
+    @objc func updateStandardEditorContent() {
+        print("updating")
+        // Copy the advanced editor's text
+        if let advancedAttributedText = advancedEditor.textStorage?.copy() as? NSAttributedString {
+            let processedText = NSMutableAttributedString(attributedString: advancedAttributedText)
+            
+            // Evaluate expressions in the copied attributed text
+            evaluateExpressionsInAttributedText(processedText)
+            
+            // Set the processed attributed text to the standard editor
+            standardEditor.textStorage?.setAttributedString(processedText)
+        }
+    }
+
+
+    private func evaluateExpressionsInAttributedText(_ attributedText: NSMutableAttributedString) {
+        let fullRange = NSRange(location: 0, length: attributedText.length)
+        
+        // Store processed ranges and replacements
+        var replacements: [(NSRange, NSAttributedString)] = []
+        
+        // Step 1: Collect replacements
+        attributedText.enumerateAttributes(in: fullRange, options: []) { attributes, range, _ in
+            let originalText = attributedText.attributedSubstring(from: range).string
+            let processedText = keywordHandler.process(originalText)
+            
+            // Only replace if there is a change
+            if originalText != processedText {
+                // Create a new attributed string with the processed text but same attributes
+                let processedAttributedString = NSAttributedString(string: processedText, attributes: attributes)
+                replacements.append((range, processedAttributedString))
+            }
+        }
+        
+        // Step 2: Apply replacements in reverse order
+        for (range, replacement) in replacements.reversed() {
+            // Debugging: Print the range and replacement details before applying
+            print("Replacing range: \(range) with text: \(replacement.string)")
+            
+            // Make sure the range is valid before applying the replacement
+            guard range.location + range.length <= attributedText.length else {
+                print("Invalid range, skipping replacement.")
+                continue
+            }
+            
+            attributedText.replaceCharacters(in: range, with: replacement)
+        }
     }
 
     @objc func closeWindow() {
         guard window != nil else { return }
-        window.delegate = nil  // Clear delegate to prevent potential calls on deallocated objects
-        window.orderOut(nil)   // Immediately hides the window
-        window.performClose(nil)  // Closes the window properly and calls the delegate
-        
+        window.delegate = nil
+        window.orderOut(nil)
+        window.performClose(nil)
         saveProperties()
-        
-        // Only remove properties if the custom close button is used
         windowWillClose(Notification(name: Notification.Name("CustomWindowWillClose")))
     }
-    
+
     func windowWillClose(_ notification: Notification) {
         print("windowWillClose called successfully")
-
         if notification.name.rawValue == "CustomWindowWillClose" {
-            // Only remove the window properties when custom button is pressed
             if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
                 print("Attempting to remove properties for window with id: \(self.id)")
                 appDelegate.windowProperties.removeAll(where: { $0.id == self.id })
-                
-                // Save the updated window properties
                 WindowPropertiesManager.shared.saveWindowProperties(appDelegate.windowProperties)
                 print("Properties removed for WindowManager with id: \(id). Remaining properties: \(appDelegate.windowProperties)")
-                
-                // Remove the window manager
                 appDelegate.windowManagers.removeAll(where: { $0 === self })
             }
         }
@@ -141,10 +238,20 @@ class WindowManager: NSObject, NSWindowDelegate {
     func windowDidBecomeKey(_ notification: Notification) {
         showCloseButtonIfNeeded()
         delegate?.windowDidBecomeActive(self)
+
+        // Ensure the Advanced Editor remains active when the window becomes key
+        if !isAdvancedEditorVisible {
+            toggleEditorVisibility()
+        }
     }
 
     func windowDidResignKey(_ notification: Notification) {
         hideCloseButtonIfNeeded()
+
+        // Only toggle to the Standard Editor when auxiliary panel is not active
+        if !auxiliaryPanelActive && isAdvancedEditorVisible {
+            toggleEditorVisibility()
+        }
     }
 
     func windowDidMove(_ notification: Notification) {
@@ -162,22 +269,18 @@ class WindowManager: NSObject, NSWindowDelegate {
         }
 
         let color = NSColor(cgColor: backgroundView.layer?.backgroundColor ?? NSColor.yellow.cgColor) ?? .yellow
-        let text = textView.attributedString()
+        let text = advancedEditor.attributedString()
         let position = window.frame.origin
         let size = window.frame.size
         return WindowProperties(id: id, color: color, text: text, position: position, size: size)
     }
 
     private func showCloseButtonIfNeeded() {
-        if closeButton != nil {
-            closeButton.isHidden = false
-        }
+        closeButton?.isHidden = false
     }
 
     private func hideCloseButtonIfNeeded() {
-        if closeButton != nil {
-            closeButton.isHidden = true
-        }
+        closeButton?.isHidden = true
     }
 
     func updateCloseButtonColor() {
@@ -191,10 +294,38 @@ class WindowManager: NSObject, NSWindowDelegate {
         return lum > 0.5 ? .black : .white
     }
 
-    // MARK: - Observers for Property Changes
-
     private func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: NSText.didChangeNotification, object: textView)
+        NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: NSText.didChangeNotification, object: advancedEditor)
+
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            if event.characters == "" {
+                self?.toggleEditorVisibility()
+                return nil
+            }
+            return event
+        }
+        
+        // Observers to track auxiliary panel activity
+        NotificationCenter.default.addObserver(self, selector: #selector(auxiliaryPanelDidOpen(_:)), name: NSWindow.didBecomeKeyNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(auxiliaryPanelDidClose(_:)), name: NSWindow.didResignKeyNotification, object: nil)
+    }
+
+    @objc private func auxiliaryPanelDidOpen(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow else { return }
+        
+        // Check if the window is a font or color panel
+        if window.className == "NSFontPanel" || window.className == "NSColorPanel" {
+            auxiliaryPanelActive = true
+        }
+    }
+
+    @objc private func auxiliaryPanelDidClose(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow else { return }
+        
+        // Check if the window is a font or color panel
+        if window.className == "NSFontPanel" || window.className == "NSColorPanel" {
+            auxiliaryPanelActive = false
+        }
     }
 
     @objc func textDidChange(_ notification: Notification) {
@@ -204,23 +335,18 @@ class WindowManager: NSObject, NSWindowDelegate {
     func saveProperties() {
         print("Clearing all stored data before saving new properties.")
 
-        // Clear all stored data by removing the entry from UserDefaults
         UserDefaults.standard.removeObject(forKey: WindowPropertiesManager.propertiesKey)
 
-        // Check if the window is still open before saving properties
         guard window != nil else {
             print("Window is nil, not saving properties.")
             return
         }
 
-        // Save the new properties
         guard let appDelegate = NSApplication.shared.delegate as? AppDelegate,
               let properties = self.captureWindowProperties() else { return }
 
-        // Update the window properties with the new properties
         appDelegate.updateWindowProperties(properties)
         
-        // Print the current saved data
         if let data = UserDefaults.standard.data(forKey: WindowPropertiesManager.propertiesKey) {
             do {
                 let decoder = JSONDecoder()
@@ -237,5 +363,7 @@ class WindowManager: NSObject, NSWindowDelegate {
     deinit {
         print("WindowManager deallocated with id: \(id)")
         NotificationCenter.default.removeObserver(self)
+        updateTimer?.invalidate()
     }
+
 }
